@@ -8,6 +8,7 @@ export default class NavigationUtil {
      * @param page 要跳转的页面名
      **/
     static goPage(params, page) {
+        //NavigationUtil.navigation在HomePage的render方法中存储变量,解决多个navigation嵌套问题
         const navigation = NavigationUtil.navigation;
         if (!navigation) {
             console.log('NavigationUtil.navigation can not be null')
@@ -34,7 +35,7 @@ export default class NavigationUtil {
      * @param navigation
      */
     static resetToHomPage(params) {
-        const {navigation} = params;
+        const { navigation } = params;
         navigation.navigate("Main");
     }
 

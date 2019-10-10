@@ -14,7 +14,7 @@ import {createReactNavigationReduxMiddleware, reduxifyNavigator} from 'react-nav
 
 export const rootCom = 'Init';//设置根路由
 
-const InitNavigator = createStackNavigator({
+const InitNavigator = createStackNavigator({ 
     WelcomePage: {
         screen: WelcomePage,
         navigationOptions: {
