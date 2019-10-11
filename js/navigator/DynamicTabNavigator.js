@@ -86,10 +86,13 @@ class DynamicTabNavigator extends Component<Props> {
             return this.Tabs;
         }
         const { PopularPage, TrendingPage, FavoritePage, MyPage } = TABS;
+
         const tabs = { PopularPage, TrendingPage, FavoritePage, MyPage };//根据需要定制显示的tab
         PopularPage.navigationOptions.tabBarLabel = '最热';//动态配置Tab属性
+        
         return this.Tabs = createAppContainer(createBottomTabNavigator(tabs, {
             tabBarComponent: props => {
+                //自定义底部组件,并且给其props添加了theme属性,通过设置theme来设置activeTintColor(选中时的色值)
                 return <TabBarComponent theme={this.props.theme} {...props} />
             }
         }
@@ -112,10 +115,7 @@ class DynamicTabNavigator extends Component<Props> {
 class TabBarComponent extends React.Component {
     constructor(props) {
         super(props);
-        this.theme = {
-            tintColor: props.activeTintColor,
-            updateTime: new Date().getTime(),
-        }
+        
     }
 
     render() {
