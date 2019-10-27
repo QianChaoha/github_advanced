@@ -8,3 +8,10 @@ export default function TimeSpan(showText, searchText) {
     this.showText = showText;
     this.searchText = searchText;
 }
+
+// export default class TimeSpan {
+//     TimeSpan(showText, searchText) {
+//         this.showText = showText;
+//         this.searchText = searchText;
+//     }
+// }

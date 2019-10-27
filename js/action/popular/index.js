@@ -30,7 +30,7 @@ export function onRefreshPopular(storeName, url, pageSize,favoriteDao) {
 }
 
 /**
- * 加载更多
+ * 加载更多(服务器没有这个功能,每次请求都会返回所有的数据dataArray,这里只是模拟加载更多功能))
  * @param storeName
  * @param pageIndex 第几页
  * @param pageSize 每页展示条数
@@ -50,12 +50,12 @@ export function onLoadMorePopular(storeName, pageIndex, pageSize, dataArray = []
                     type: Types.POPULAR_LOAD_MORE_FAIL,
                     error: 'no more',
                     storeName: storeName,
-                    pageIndex: --pageIndex,
+                    pageIndex: --pageIndex,//假如pageIndex==6，说明第6页没有数据,将pageIndex减1
                 })
             } else {
                 //本次和载入的最大数量
                 let max = pageSize * pageIndex > dataArray.length ? dataArray.length : pageSize * pageIndex;
-                _projectModels(dataArray.slice(0, max),favoriteDao,data=>{
+                _projectModels(dataArray.slice(0, max),favoriteDao,data=>{//slice() 包含从 start 到 end （不包括该元素）的 arrayObject 中的元素。
                     dispatch({
                         type: Types.POPULAR_LOAD_MORE_SUCCESS,
                         storeName,

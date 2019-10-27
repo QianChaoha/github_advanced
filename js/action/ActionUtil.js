@@ -10,7 +10,7 @@
 import ProjectModel from "../model/ProjectModel";
 import Utils from "../util/Utils";
 /**
- * 处理数据
+ * 处理数据(目前只在下拉刷新时调用此方法,因为后台没有做分页,fixItems拿到的是全部数据,这里也只是模拟下拉刷新,加载pageSize条数据)
  * @param actionType
  * @param dispatch
  * @param storeName
@@ -22,6 +22,7 @@ import Utils from "../util/Utils";
 export function handleData(actionType, dispatch, storeName, data, pageSize, favoriteDao,params) {
     let fixItems = [];
     if (data && data.data) {
+        //最热和趋势模块数据结构不一样,最热模块数据没有items
         if (Array.isArray(data.data)) {
             fixItems = data.data;
         } else if (Array.isArray(data.data.items)) {
@@ -35,7 +36,7 @@ export function handleData(actionType, dispatch, storeName, data, pageSize, favo
             type: actionType,
             items: fixItems,
             projectModels:projectModels,
-            storeName,
+            storeName,//es6写法,相当于storeName:storeName
             pageIndex: 1,
             ...params
         })

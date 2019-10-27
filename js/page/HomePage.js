@@ -36,7 +36,7 @@ class HomePage extends Component<Props> {
             return false;
         }
         dispatch(NavigationActions.back());
-        return true;
+        return true;//返回true，系统就不会处理返回键了
     };
 
     renderCustomThemeView() {

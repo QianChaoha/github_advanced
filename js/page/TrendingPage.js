@@ -13,7 +13,7 @@ import {connect} from 'react-redux';
 import actions from '../action/index'
 import {createMaterialTopTabNavigator, createAppContainer} from "react-navigation";
 import NavigationUtil from '../navigator/NavigationUtil'
-import TrendingItem from '../common/TrendingItem'
+import TrendingItem from '../common/TrendingItem' 
 import Toast from 'react-native-easy-toast'
 import NavigationBar from '../common/NavigationBar';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons'
@@ -37,7 +37,7 @@ class TrendingPage extends Component<Props> {
         super(props);
         console.log(NavigationUtil.navigation);
         this.state = {
-            timeSpan: TimeSpans[0],
+            timeSpan: TimeSpans[0],//默认是 "今天"
         };
         const {onLoadLanguage} = this.props;
         onLoadLanguage(FLAG_LANGUAGE.flag_language);
@@ -88,6 +88,9 @@ class TrendingPage extends Component<Props> {
         this.setState({
             timeSpan: tab
         });
+        //选中后发现所有tab重新渲染,又切到第一个tab --> 根据需要调用createAppContainer方法,不需要重新渲染tab就将之前创建好的tab返回
+        //--> 不调用createAppContainer方法导致下面没有重新拉取数据 --> 每次选择 "每日"/ "每周" 后使用事件发送器DeviceEventEmitter发送通知
+        //--> 收到通知后重新拉取数据
         DeviceEventEmitter.emit(EVENT_TYPE_TIME_SPAN_CHANGE, tab);
     }
 
@@ -150,7 +153,7 @@ const mapTrendingStateToProps = state => ({
 const mapTrendingDispatchToProps = dispatch => ({
     onLoadLanguage: (flag) => dispatch(actions.onLoadLanguage(flag))
 });
-//注意：connect只是个function，并不应定非要放在export后面
+//注意：connect只是个function，并不应 定非要放在export后面
 export default connect(mapTrendingStateToProps, mapTrendingDispatchToProps)(TrendingPage);
 
 
@@ -166,6 +169,7 @@ class TrendingTab extends Component<Props> {
 
     componentDidMount() {
         this.loadData();
+        //注意取消监听timeSpanChangeListener
         this.timeSpanChangeListener = DeviceEventEmitter.addListener(EVENT_TYPE_TIME_SPAN_CHANGE, (timeSpan) => {
             this.timeSpan = timeSpan;
             this.loadData();

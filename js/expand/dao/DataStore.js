@@ -8,7 +8,7 @@ export default class DataStore {
     /**
      * 获取数据，优先获取本地数据，如果无本地数据或本地数据过期则获取网络数据
      * @param url
-     * @param flag
+     * @param flag 标识获取"最热"还是"趋势"模块数据
      * @returns {Promise}
      */
     fetchData(url, flag) {
@@ -77,6 +77,7 @@ export default class DataStore {
     fetchNetData(url, flag) {
         return new Promise((resolve, reject) => {
             if (flag !== FLAG_STORAGE.flag_trending) {
+                //获取"最热"模块数据
                 fetch(url)
                     .then((response) => {
                         if (response.ok) {
@@ -92,6 +93,7 @@ export default class DataStore {
                         reject(error);
                     })
             } else {
+                //获取"趋势"模块数据
                 new Trending().fetchTrending(url)
                     .then(items => {
                         if (!items) {

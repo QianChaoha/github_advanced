@@ -48,6 +48,7 @@ const styles = StyleSheet.create({
             borderColor: '#dddddd',
             borderWidth: 0.5,
             borderRadius: 2,
+            //阴影设置只对IOS有效
             shadowColor: 'gray',
             shadowOffset: {width: 0.5, height: 0.5},
             shadowOpacity: 0.4,

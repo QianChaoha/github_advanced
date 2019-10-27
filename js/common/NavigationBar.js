@@ -1,6 +1,6 @@
-import React,{Component} from 'react'
-import {ViewPropTypes, Text, StatusBar, StyleSheet, View, Platform,DeviceInfo} from 'react-native'
-import {PropTypes} from 'prop-types';
+import React, { Component } from 'react'
+import { ViewPropTypes, Text, StatusBar, StyleSheet, View, Platform, DeviceInfo } from 'react-native'
+import { PropTypes } from 'prop-types';
 
 const NAV_BAR_HEIGHT_IOS = 44;//导航栏在iOS中的高度
 const NAV_BAR_HEIGHT_ANDROID = 50;//导航栏在Android中的高度
@@ -37,6 +37,7 @@ export default class NavigationBar extends Component {
             </View> : null;
 
         let titleView = this.props.titleView ? this.props.titleView :
+            // numberOfLines最多只显示一行,显示不下的话用省略号,ellipsizeMode设置省略号样式(head:省略号在左边)
             <Text ellipsizeMode="head" numberOfLines={1} style={styles.title}>{this.props.title}</Text>;
 
         let content = this.props.hide ? null :
@@ -49,12 +50,16 @@ export default class NavigationBar extends Component {
             </View>;
         return (
             <View style={[styles.container, this.props.style]}>
+                {/* 状态栏 */}
                 {statusBar}
+                {/* 导航栏 */}
                 {content}
             </View>
         )
     }
-
+    /**
+     * 左侧返回按钮
+     */
     getButtonElement(data) {
         return (
             <View style={styles.navBarButton}>
@@ -71,7 +76,7 @@ const styles = StyleSheet.create({
     navBarButton: {
         alignItems: 'center'
     },
-    navBar: {
+    navBar: { 
         flexDirection: 'row',
         alignItems: 'center',
         justifyContent: 'space-between',
@@ -81,8 +86,8 @@ const styles = StyleSheet.create({
         alignItems: 'center',
         justifyContent: 'center',
         position: 'absolute',
-        left: 40,
-        right: 40,
+        left: 40,//留给左侧返回按钮
+        right: 40,//留给右侧空间
         top: 0,
         bottom: 0
     },

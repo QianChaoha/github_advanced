@@ -1,6 +1,6 @@
 import React from 'react';
 import {Image, StyleSheet, Text, TouchableOpacity, View,} from 'react-native'
-import HTMLView from 'react-native-htmlview';
+import HTMLView from 'react-native-htmlview';//一个可以识别html标签的Text。https://github.com/jsdf/react-native-htmlview
 import BaseItem from "./BaseItem";
 
 export default class TrendingItem extends BaseItem {
@@ -20,10 +20,11 @@ export default class TrendingItem extends BaseItem {
                     <HTMLView
                         value={description}
                         onLinkPress={(url) => {
+                            //点击里面的url时回调
                         }}
                         stylesheet={{
-                            p: styles.description,
-                            a: styles.description,
+                            p: styles.description,//给里面的p标签设置样式
+                            a: styles.description,//给里面的a标签设置样式
                         }}
                     />
                     <Text style={styles.description}>

@@ -23,7 +23,7 @@ export default function onAction(state = defaultState, action) {
         case Types.POPULAR_REFRESH_SUCCESS://下拉刷新成功
             return {
                 ...state,
-                [action.storeName]: {
+                [action.storeName]: {//[action.storeName] 相当于 java   ios
                     ...state[action.storeName],
                     items: action.items,//原始数据
                     projectModels: action.projectModels,//此次要展示的数据
@@ -51,12 +51,12 @@ export default function onAction(state = defaultState, action) {
             };
         case Types.POPULAR_LOAD_MORE_SUCCESS://上拉加载更多成功
             return {
-                ...state,//Object.assign @http://www.devio.org/2018/09/09/ES6-ES7-ES8-Feature/
+                ...state,//Object.assign可以代替延展操作符 @http://www.devio.org/2018/09/09/ES6-ES7-ES8-Feature/
                 [action.storeName]: {
                     ...state[action.storeName],
                     projectModels: action.projectModels,
                     hideLoadingMore: false,
-                    pageIndex: action.pageIndex,
+                    pageIndex: action.pageIndex, 
                 }
             };
         case Types.POPULAR_LOAD_MORE_FAIL://上拉加载更多失败

@@ -53,11 +53,12 @@ export default class BaseItem extends Component {
         this.props.onFavorite(this.props.projectModel.item, !this.state.isFavorite)
     }
 
+    //收藏的icon
     _favoriteIcon() {
         const {theme} = this.props;
         return <TouchableOpacity
             style={{padding: 6}}
-            underlayColor='transparent'
+            underlayColor='transparent' //当触摸或者点击控件的时候显示出的颜色
             onPress={() => this.onPressFavorite()}>
             <FontAwesome
                 name={this.state.isFavorite ? 'star' : 'star-o'}

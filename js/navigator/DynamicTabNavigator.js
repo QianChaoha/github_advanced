@@ -82,6 +82,7 @@ class DynamicTabNavigator extends Component<Props> {
     }
 
     _tabNavigator() {
+        //防止UI更新重新创建Tabs(因为只要一重新创建,因为只要一创建就会默认定位到第一个Tab)
         if (this.Tabs) {
             return this.Tabs;
         }
@@ -89,8 +90,9 @@ class DynamicTabNavigator extends Component<Props> {
 
         const tabs = { PopularPage, TrendingPage, FavoritePage, MyPage };//根据需要定制显示的tab
         PopularPage.navigationOptions.tabBarLabel = '最热';//动态配置Tab属性
-        
+
         return this.Tabs = createAppContainer(createBottomTabNavigator(tabs, {
+            // tabBarComponent: TabBarComponent,接收props里的theme
             tabBarComponent: props => {
                 //自定义底部组件,并且给其props添加了theme属性,通过设置theme来设置activeTintColor(选中时的色值)
                 return <TabBarComponent theme={this.props.theme} {...props} />
@@ -115,7 +117,7 @@ class DynamicTabNavigator extends Component<Props> {
 class TabBarComponent extends React.Component {
     constructor(props) {
         super(props);
-        
+
     }
 
     render() {
@@ -126,6 +128,7 @@ class TabBarComponent extends React.Component {
     }
 }
 
+//将state里的theme关联到props中theme --> 将theme传递给TabBarComponent
 const mapStateToProps = state => ({
     theme: state.theme.theme,
 });

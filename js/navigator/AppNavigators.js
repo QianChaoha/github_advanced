@@ -12,7 +12,7 @@ import CodePushPage from '../page/CodePushPage';
 import {connect} from 'react-redux';
 import {createReactNavigationReduxMiddleware, reduxifyNavigator} from 'react-navigation-redux-helpers';
 
-export const rootCom = 'Init';//设置根路由
+export const rootCom = 'Init';//设置根路由,跟RootNavigator对应
 
 const InitNavigator = createStackNavigator({ 
     WelcomePage: {
