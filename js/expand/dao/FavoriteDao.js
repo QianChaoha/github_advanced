@@ -3,11 +3,13 @@ import {
 } from 'react-native';
 const FAVORITE_KEY_PREFIX = 'favorite_';
 export default class FavoriteDao {
+    /** 标识是最热模块还是趋势模块 */
     constructor(flag) {
+        //favoriteKey用来保存所有key的集合
         this.favoriteKey = FAVORITE_KEY_PREFIX + flag;
     }
     /**
-     * 收藏项目,保存收藏的项目
+     * 收藏项目,保存收藏的项目。用户点击 "收藏"按钮后调用
      * @param key 项目id
      * @param value 收藏的项目
      * @param callback
@@ -77,9 +79,11 @@ export default class FavoriteDao {
      */
     getAllItems() {
         return new Promise((resolve, reject) => {
+            //拿出所有的key集合
             this.getFavoriteKeys().then((keys) => {
                 let items = [];
                 if (keys) {
+                    //通过key集合拿取所有的项目具体内容。multiGet返回的是个二维数组,第0个元素是key,第1个元素是value
                     AsyncStorage.multiGet(keys, (err, stores) => {
                         try {
                             stores.map((result, i, store) => {

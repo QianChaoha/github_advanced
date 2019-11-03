@@ -51,6 +51,7 @@ class FavoritePage extends Component<Props> {
                 tabBarOptions: {
                     tabStyle: styles.tabStyle,
                     upperCaseLabel: false,//是否使标签大写，默认为true
+                    scrollEnabled: false,//是否支持 选项卡滚动，默认false(选项卡就可以平分屏幕)
                     style: {
                         backgroundColor: theme.themeColor,//TabBar 的背景颜色
                         height: 30//fix 开启scrollEnabled后再Android上初次加载时闪烁问题
@@ -83,8 +84,9 @@ class FavoriteTab extends Component<Props> {
 
     componentDidMount() {
         this.loadData(true);
+        //注意移除监听器
         EventBus.getInstance().addListener(EventTypes.bottom_tab_select, this.listener = data => {
-            if (data.to === 2) {
+            if (data.to === 2) {//切换到index==2时的页面
                 this.loadData(false);
             }
         })
@@ -116,7 +118,9 @@ class FavoriteTab extends Component<Props> {
         }
         return store;
     }
-
+    /**点击收藏或者取消收藏时回调,"收藏"模块因为数据比较少，一进入就可以刷新。但是 "最热"和 "趋势"模块数据比较多,只有当"收藏"
+     * 模块的item被点击了才发送事件,通知 "最热"和 "趋势"模块，下次显示此tab时进行更新
+     */
     onFavorite(item, isFavorite) {
         FavoriteUtil.onFavorite(this.favoriteDao, item, isFavorite, this.props.flag);
         if (this.storeName === FLAG_STORAGE.flag_popular) {
@@ -141,6 +145,7 @@ class FavoriteTab extends Component<Props> {
                     callback,
                 }, 'DetailPage')
             }}
+            //点击收藏或者取消收藏时回调
             onFavorite={(item, isFavorite) => this.onFavorite(item, isFavorite)}
         />
     }

@@ -104,10 +104,12 @@ class DynamicTabNavigator extends Component<Props> {
     render() {
         const Tab = this._tabNavigator();
         return <Tab
+            //底部tab发生切换时回调
             onNavigationStateChange={(prevState, newState, action) => {
+                //第一个参数,时间名称，相当于key,第二个参数,携带的数据
                 EventBus.getInstance().fireEvent(EventTypes.bottom_tab_select, {//发送底部tab切换的事件
-                    from: prevState.index,
-                    to: newState.index
+                    from: prevState.index,//切换前tab的Index
+                    to: newState.index//切换后tab的Index
                 })
             }}
         />

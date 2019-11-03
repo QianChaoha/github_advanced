@@ -44,7 +44,7 @@ export function handleData(actionType, dispatch, storeName, data, pageSize, favo
 }
 
 /**
- * 通过本地的收藏状态包装Item
+ * 通过本地的收藏状态包装Item,将showItems里数据加上一个 "收藏状态"字段(检测showItems每条数据的id或者fullName是否在keys里面,"趋势"模块用fullName,"最热"模块用id)
  * @param showItems
  * @param favoriteDao
  * @param callback
@@ -54,6 +54,7 @@ export function handleData(actionType, dispatch, storeName, data, pageSize, favo
 export async function _projectModels(showItems, favoriteDao, callback) {
     let keys = [];
     try {
+        异步转同步
         //获取收藏的key
         keys = await favoriteDao.getFavoriteKeys();
     } catch (e) {
@@ -64,6 +65,14 @@ export async function _projectModels(showItems, favoriteDao, callback) {
         projectModels.push(new ProjectModel(showItems[i], Utils.checkFavorite(showItems[i], keys)));
     }
     doCallBack(callback,projectModels);
+
+    // favoriteDao.getFavoriteKeys().then((keys)=>{
+    //     let projectModels = [];
+    //     for (let i = 0, len = showItems.length; i < len; i++) {
+    //         projectModels.push(new ProjectModel(showItems[i], Utils.checkFavorite(showItems[i], keys)));
+    //     }
+    //     doCallBack(callback, projectModels);
+    // });
 }
 export const doCallBack = (callBack, object) => {
     if (typeof callBack === 'function') {

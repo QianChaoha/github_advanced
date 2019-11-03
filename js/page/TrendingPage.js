@@ -175,9 +175,11 @@ class TrendingTab extends Component<Props> {
             this.loadData();
         });
         EventBus.getInstance().addListener(EventTypes.favoriteChanged_trending, this.favoriteChangeListener = () => {
+            //收藏模块数据的收藏状态发生了改变
             this.isFavoriteChanged = true;
         });
         EventBus.getInstance().addListener(EventTypes.bottom_tab_select, this.bottomTabSelectListener = (data) => {
+            //收藏模块数据的收藏状态发生了改变同时，切换到了 "趋势"模块
             if (data.to === 1 && this.isFavoriteChanged) {
                 this.loadData(null, true);
             }

@@ -20,9 +20,11 @@ export default {
     TRENDING_LOAD_MORE_FAIL: "TRENDING_LOAD_MORE_FAIL",
     //============================趋势模块=======================================
 
+    //============================收藏模块=======================================
     FAVORITE_LOAD_DATA: "FAVORITE_LOAD_DATA",
     FAVORITE_LOAD_SUCCESS: "FAVORITE_LOAD_SUCCESS",
     FAVORITE_LOAD_FAIL: "FAVORITE_LOAD_FAIL",
+    //============================收藏模块=======================================
     LANGUAGE_LOAD_SUCCESS: "LANGUAGE_LOAD_SUCCESS",
     SEARCH_LOAD_MORE_SUCCESS: "SEARCH_LOAD_MORE_SUCCESS",
     SEARCH_LOAD_MORE_FAIL: "SEARCH_LOAD_MORE_FAIL",

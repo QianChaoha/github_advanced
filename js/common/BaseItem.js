@@ -3,12 +3,12 @@ import {Image, StyleSheet, Text, TouchableOpacity, View,} from 'react-native'
 import FontAwesome from 'react-native-vector-icons/FontAwesome';
 import HTMLView from 'react-native-htmlview';
 import {PropTypes} from 'prop-types';
-
+/**封装了 "趋势"和 "最热"模块公用的部分 */
 export default class BaseItem extends Component {
     static propTypes = {
         projectModel: PropTypes.object,
-        onSelect: PropTypes.func,
-        onFavorite: PropTypes.func,
+        onSelect: PropTypes.func,//item点击时候回调
+        onFavorite: PropTypes.func,//点击收藏 时候回调
     };
 
     constructor(props) {
@@ -50,6 +50,7 @@ export default class BaseItem extends Component {
 
     onPressFavorite() {
         this.setFavoriteState(!this.state.isFavorite);
+        //执行回调函数
         this.props.onFavorite(this.props.projectModel.item, !this.state.isFavorite)
     }
 

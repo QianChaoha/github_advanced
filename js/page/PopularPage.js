@@ -144,9 +144,11 @@ class PopularTab extends Component<Props> {
     componentDidMount() {
         this.loadData();
         EventBus.getInstance().addListener(EventTypes.favorite_changed_popular, this.favoriteChangeListener = () => {
+            //收藏模块数据的收藏状态发生了改变
             this.isFavoriteChanged = true;
         });
         EventBus.getInstance().addListener(EventTypes.bottom_tab_select, this.bottomTabSelectListener = (data) => {
+            //收藏模块数据的收藏状态发生了改变同时，切换到了 "最热"模块
             if (data.to === 0 && this.isFavoriteChanged) {
                 this.loadData(null, true);
             }
@@ -168,6 +170,7 @@ class PopularTab extends Component<Props> {
                 this.refs.toast.show('没有更多了');
             })
         } else if (refreshFavorite) {
+            //实际开发不实用，因为这里是拉下来所有数据，拉下所有数据后在加载更多时取0-store.pageIndex数据(实际只会加载store.pageIndex-1到store.pageIndex页数据)
             onFlushPopularFavorite(this.storeName, store.pageIndex, pageSize, store.items, favoriteDao);
         } else {
             onRefreshPopular(this.storeName, url, pageSize, favoriteDao)

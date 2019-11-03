@@ -7,13 +7,14 @@ import ProjectModel from "../../model/ProjectModel";
 
 /**
  * 加载收藏的项目
- * @param flag 标识
+ * @param flag 标识,传入FLAG_STORAGE = {flag_popular: 'popular', flag_trending: 'trending'}其中一个参数
  * @param isShowLoading 是否显示loading
  * @returns {function(*)}
  */
 export function onLoadFavoriteData(flag, isShowLoading) {
     return dispatch => {
         if (isShowLoading) {
+            //第一次进入 "收藏"页面需要动画,下次进来,直接刷新数据，不需要动画。是否显示动画通过isShowLoading来控制
             dispatch({type: Types.FAVORITE_LOAD_DATA, storeName: flag});
         }
         new FavoriteDao(flag).getAllItems()
