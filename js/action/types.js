@@ -25,7 +25,11 @@ export default {
     FAVORITE_LOAD_SUCCESS: "FAVORITE_LOAD_SUCCESS",
     FAVORITE_LOAD_FAIL: "FAVORITE_LOAD_FAIL",
     //============================收藏模块=======================================
+
+    //============================加载语言数据=======================================
     LANGUAGE_LOAD_SUCCESS: "LANGUAGE_LOAD_SUCCESS",
+    //============================加载语言数据=======================================
+
     SEARCH_LOAD_MORE_SUCCESS: "SEARCH_LOAD_MORE_SUCCESS",
     SEARCH_LOAD_MORE_FAIL: "SEARCH_LOAD_MORE_FAIL",
     SEARCH_REFRESH: "SEARCH_REFRESH",

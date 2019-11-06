@@ -43,6 +43,7 @@ actions.onRefreshPopular --->  获取数据成功后dispatch到redux ---> redux�
 class PopularPage extends Component<Props> {
     constructor(props) {
         super(props);
+        //发起LANGUAGE_LOAD_SUCCESS action
         const { onLoadLanguage } = this.props;
         onLoadLanguage(FLAG_LANGUAGE.flag_key);
     }
@@ -50,6 +51,7 @@ class PopularPage extends Component<Props> {
     _genTabs() {
         const tabs = {};
         const { keys, theme } = this.props;
+        debugger
         keys.forEach((item, index) => {
             if (item.checked) {
                 tabs[`tab${index}`] = {
@@ -86,6 +88,7 @@ class PopularPage extends Component<Props> {
         </TouchableOpacity>
     }
     render() {
+        //订阅LANGUAGE_LOAD_SUCCESS action后,keys数据来自  res/data/langs
         const { keys, theme } = this.props;
         let statusBar = {
             backgroundColor: theme.themeColor,

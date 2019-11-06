@@ -20,6 +20,7 @@ export default class LanguageDao {
                     return;
                 }
                 if (!result) {
+                    //没有数据,就从本地
                     let data = this.flag === FLAG_LANGUAGE.flag_language ? langs : keys;
                     this.save(data);
                     resolve(data);

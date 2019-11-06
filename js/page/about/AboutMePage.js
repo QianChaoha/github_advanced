@@ -23,7 +23,8 @@ export default class AboutMePage extends Component<Props> {
             }, data => this.setState({...data})
         );
         this.state = {
-            data: config,
+            data: config,//先加载本地数据,AboutCommon获取到数据后会回调AboutMePage的this.setState()方法更新数据
+            //控制是否展开的一些变量
             showTutorial: true,
             showBlog: false,
             showQQ: false,
@@ -35,6 +36,7 @@ export default class AboutMePage extends Component<Props> {
         if (!tab) return;
         const {theme}=this.params;
         if (tab.url) {
+            //跳转网页
             NavigationUtil.goPage({
                 theme,
                 title: tab.title,
@@ -43,6 +45,7 @@ export default class AboutMePage extends Component<Props> {
             return;
         }
         if (tab.account && tab.account.indexOf('@') > -1) {
+            //跳转邮箱
             let url = 'mailto://' + tab.account;
             Linking.canOpenURL(url).then(supported => {
                 if (!supported) {
@@ -54,6 +57,7 @@ export default class AboutMePage extends Component<Props> {
             return;
         }
         if (tab.account) {
+            //复制到剪切板  Clipboard.getString()从剪切板获取数据
             Clipboard.setString(tab.account);
             this.toast.show(tab.title + tab.account + '已复制到剪切板。');
         }
@@ -67,6 +71,7 @@ export default class AboutMePage extends Component<Props> {
         const {theme} = this.params;
         return ViewUtil.getSettingItem(() => {
             this.setState({
+                //动态改变属性
                 [key]: !this.state[key]
             });
         }, data.name, theme.themeColor, Ionicons, data.icon, isShow ? 'ios-arrow-up' : 'ios-arrow-down')
@@ -94,6 +99,7 @@ export default class AboutMePage extends Component<Props> {
     }
 
     render() {
+        //未获取到网络数据前,state取自import config from '../../res/data/config'本地数据
         const content = <View>
             {this._item(this.state.data.aboutMe.Tutorial, this.state.showTutorial, 'showTutorial')}
             <View style={GlobalStyles.line}/>

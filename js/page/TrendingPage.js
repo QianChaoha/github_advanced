@@ -39,6 +39,7 @@ class TrendingPage extends Component<Props> {
         this.state = {
             timeSpan: TimeSpans[0],//默认是 "今天"
         };
+        //发起LANGUAGE_LOAD_SUCCESS action
         const {onLoadLanguage} = this.props;
         onLoadLanguage(FLAG_LANGUAGE.flag_language);
         this.preKeys = [];
@@ -46,6 +47,7 @@ class TrendingPage extends Component<Props> {
 
     _genTabs() {
         const tabs = {};
+        //订阅LANGUAGE_LOAD_SUCCESS action后,keys数据来自  res/data/langs
         const {keys, theme} = this.props;
         this.preKeys = keys;
         keys.forEach((item, index) => {
@@ -104,6 +106,7 @@ class TrendingPage extends Component<Props> {
     _tabNav() {
         const {theme} = this.props;
         //注意：主题发生变化需要重新渲染top tab
+        ////订阅LANGUAGE_LOAD_SUCCESS action后,keys数据来自  res/data/langs。keys发生变化,就是tab发生变化,需要重新渲染
         if (theme !== this.theme || !this.tabNav || !ArrayUtil.isEqual(this.preKeys, this.props.keys)) {//优化效率：根据需要选择是否重新创建建TabNavigator，通常tab改变后才重新创建
             this.theme = theme;
             this.tabNav = createAppContainer(createMaterialTopTabNavigator(

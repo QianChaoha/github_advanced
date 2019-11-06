@@ -44,6 +44,7 @@ export default class WebViewPage extends Component<Props> {
     }
 
     onNavigationStateChange(navState) {
+        console.warn('---onNavigationStateChange---');
         this.setState({
             canGoBack: navState.canGoBack,
             url: navState.url,
@@ -66,8 +67,8 @@ export default class WebViewPage extends Component<Props> {
                 {navigationBar}
                 <WebView
                     ref={webView => this.webView = webView}
-                    startInLoadingState={true}
-                    onNavigationStateChange={e => this.onNavigationStateChange(e)}
+                    startInLoadingState={true}//加载时候显示进度条
+                    onNavigationStateChange={e => this.onNavigationStateChange(e)}//当导航状态发生变化的时候调用
                     source={{uri: this.state.url}}
                 />
             </SafeAreaViewPlus>

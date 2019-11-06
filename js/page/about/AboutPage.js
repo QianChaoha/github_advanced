@@ -26,7 +26,7 @@ export default class AboutPage extends Component<Props> {
 
     onClick(menu) {
         const {theme} = this.params;
-        let RoutseName, params = {theme};
+        let RouteName, params = {theme};
         switch (menu) {
             case MORE_MENU.Tutorial:
                 RouteName = 'WebViewPage';
@@ -38,11 +38,13 @@ export default class AboutPage extends Component<Props> {
                 break;
             case MORE_MENU.Feedback:
                 const url = 'mailto://crazycodeboy@gmail.com';
+                //Linking用来发短信，打电话，打开三方应用等操作
                 Linking.canOpenURL(url)
                     .then(support => {
                         debugger
                         if (!support) {
-                            console.log('Can\'t handle url: ' + url);
+                            //打不开此url
+                            console.warn('Can\'t handle url: ' + url);
                         } else {
                             Linking.openURL(url);
                         }

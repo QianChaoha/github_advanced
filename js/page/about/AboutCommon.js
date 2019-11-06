@@ -1,5 +1,5 @@
 import React from 'react';
-import {DeviceInfo,View, Text, Image, Dimensions, StyleSheet, Platform} from "react-native";
+import { DeviceInfo, View, Text, Image, Dimensions, StyleSheet, Platform } from "react-native";
 import BackPressComponent from "../../common/BackPressComponent";
 import NavigationUtil from "../../navigator/NavigationUtil";
 import ParallaxScrollView from 'react-native-parallax-scroll-view';
@@ -7,12 +7,13 @@ import GlobalStyles from '../../res/styles/GlobalStyles'
 import ViewUtil from "../../util/ViewUtil";
 import ShareUtil from '../../util/ShareUtil'
 import share from '../../res/data/share.json'
-export const FLAG_ABOUT = {flag_about: 'about', flag_about_me: 'about_me'};
+export const FLAG_ABOUT = { flag_about: 'about', flag_about_me: 'about_me' };
 export default class AboutCommon {
+    /** 获取到数据后通过updateState方法回调 */
     constructor(props, updateState) {
         this.props = props;
         this.updateState = updateState;
-        this.backPress = new BackPressComponent({backPress: () => this.onBackPress()});
+        this.backPress = new BackPressComponent({ backPress: () => this.onBackPress() });
     }
 
     onBackPress() {
@@ -31,6 +32,7 @@ export default class AboutCommon {
             })
             .then(config => {
                 if (config) {
+                    //回调子类的setState方法
                     this.updateState({
                         data: config
                     })
@@ -47,8 +49,9 @@ export default class AboutCommon {
 
     onShare() {
         let shareApp;
-        const {flagAbout} = this.props;
+        const { flagAbout } = this.props;
         if (flagAbout === FLAG_ABOUT.flag_about_me) {
+            //"关于作者"页面
             shareApp = share.share_app;
         } else {
             shareApp = share.share_blog;
@@ -62,30 +65,32 @@ export default class AboutCommon {
         //     console.log("result:" + e);
         // })
     }
-
+    /** 配置ParallaxScrollView的相关属性 */
     getParallaxRenderConfig(params) {
         let config = {};
-        let avatar = typeof(params.avatar) === 'string' ? {uri: params.avatar} : params.avatar;
+        let avatar = typeof (params.avatar) === 'string' ? { uri: params.avatar } : params.avatar;
+        //背景
         config.renderBackground = () => (
             <View key="background">
                 <Image source={{
                     uri: params.backgroundImg,
                     width: window.width,
                     height: PARALLAX_HEADER_HEIGHT
-                }}/>
+                }} />
                 <View style={{
                     position: 'absolute',
                     top: 0,
                     width: window.width,
                     backgroundColor: 'rgba(0,0,0,.4)',
                     height: PARALLAX_HEADER_HEIGHT
-                }}/>
+                }} />
             </View>
         );
+        //前景
         config.renderForeground = () => (
             <View key="parallax-header" style={styles.parallaxHeader}>
                 <Image style={styles.avatar}
-                       source={avatar}/>
+                    source={avatar} />
                 <Text style={styles.sectionSpeakerText}>
                     {params.name}
                 </Text>
@@ -94,11 +99,13 @@ export default class AboutCommon {
                 </Text>
             </View>
         );
+        //顶部悬浮标题(跟随滑动)
         config.renderStickyHeader = () => (
             <View key="sticky-header" style={styles.stickySection}>
                 <Text style={styles.stickySectionText}>{params.name}</Text>
             </View>
         );
+        //顶部两侧的悬浮按钮(不跟随滑动)
         config.renderFixedHeader = () => (
             <View key="fixed-header" style={styles.fixedSection}>
                 {ViewUtil.getLeftBackButton(() => NavigationUtil.goBack(this.props.navigation))}
@@ -110,16 +117,17 @@ export default class AboutCommon {
     }
 
     render(contentView, params) {
-        const {theme}=this.props;
+        const { theme } = this.props;
         const renderConfig = this.getParallaxRenderConfig(params);
         return (
             <ParallaxScrollView
                 backgroundColor={theme.themeColor}
                 contentBackgroundColor={GlobalStyles.backgroundColor}
                 parallaxHeaderHeight={PARALLAX_HEADER_HEIGHT}
-                stickyHeaderHeight={STICKY_HEADER_HEIGHT}
-                backgroundScrollSpeed={10}
+                stickyHeaderHeight={STICKY_HEADER_HEIGHT}//顶部title的高度
+                backgroundScrollSpeed={10}//在android上没发现什么用
                 {...renderConfig}>
+                {/* 内容区域 */}
                 {contentView}
             </ParallaxScrollView>
         )
@@ -127,7 +135,7 @@ export default class AboutCommon {
 
 }
 const window = Dimensions.get('window');
-const AVATAR_SIZE = 90;
+const AVATAR_SIZE = 90;//头像的大小
 const PARALLAX_HEADER_HEIGHT = 270;
 const TOP = (Platform.OS === 'ios') ? 20 + (DeviceInfo.isIPhoneX_deprecated ? 24 : 0) : 0;
 const STICKY_HEADER_HEIGHT = (Platform.OS === 'ios') ? GlobalStyles.nav_bar_height_ios + TOP : GlobalStyles.nav_bar_height_android;
@@ -147,7 +155,7 @@ const styles = StyleSheet.create({
     stickySection: {
         height: STICKY_HEADER_HEIGHT,
         alignItems: 'center',
-        paddingTop:TOP
+        paddingTop: TOP
     },
     stickySectionText: {
         color: 'white',
@@ -164,7 +172,7 @@ const styles = StyleSheet.create({
         flexDirection: 'row',
         alignItems: 'center',
         justifyContent: 'space-between',
-        paddingTop:TOP
+        paddingTop: TOP
     },
     fixedSectionText: {
         color: '#999',
