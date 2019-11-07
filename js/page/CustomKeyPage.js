@@ -29,16 +29,18 @@ class CustomKeyPage extends Component<Props> {
             keys: []
         }
     }
-
-    // static getDerivedStateFromProps(nextProps, prevState) {
-            //老数据和新数据不相等时，将新数据更新到keys
-    //     if (prevState.keys !== CustomKeyPage._keys(nextProps, null, prevState)) {
-    //         return {
-    //             keys: CustomKeyPage._keys(nextProps, null, prevState),
-    //         }
-    //     }
-    //     return null;
-    // }
+    //生命周期:constructor --> getDerivedStateFromProps --> render --> componentDidMount
+    //app打开后 "最热"模块会发起action,此页面从reducer获取数据,假如网络较慢有可能当前页面已经打开但是reducer还是没有数据。但只要获取到数据,props就会改变
+    //getDerivedStateFromProps就会被调用
+    static getDerivedStateFromProps(nextProps, prevState) {
+        //老数据和新数据不相等时，将新数据更新到keys
+        if (prevState.keys !== CustomKeyPage._keys(nextProps, null, prevState)) {
+            return {
+                keys: CustomKeyPage._keys(nextProps, null, prevState),
+            }
+        }
+        return null;
+    }
 
     componentDidMount() {
         this.backPress.componentDidMount();
@@ -167,14 +169,14 @@ class CustomKeyPage extends Component<Props> {
     }
 
     renderCheckBox(data, index) {
-        return <CheckBox
+        return data ? <CheckBox
             style={{ flex: 1, padding: 10 }}
             onClick={() => this.onClick(data, index)}
             isChecked={data.checked}
             leftText={data.name}
             checkedImage={this._checkedImage(true)}//设置选中状态时图标
             unCheckedImage={this._checkedImage(false)}//设置非选中状态时图标
-        />
+        /> : null;
     }
 
     render() {

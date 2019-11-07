@@ -1,10 +1,10 @@
-import React, {Component} from 'react';
-import {Alert, TouchableHighlight, StyleSheet, View, Text} from 'react-native';
-import {connect} from 'react-redux';
+import React, { Component } from 'react';
+import { Alert, TouchableHighlight, StyleSheet, View, Text } from 'react-native';
+import { connect } from 'react-redux';
 import actions from '../action/index'
 import NavigationUtil from '../navigator/NavigationUtil'
 import NavigationBar from '../common/NavigationBar';
-import LanguageDao, {FLAG_LANGUAGE} from "../expand/dao/LanguageDao";
+import LanguageDao, { FLAG_LANGUAGE } from "../expand/dao/LanguageDao";
 import BackPressComponent from "../common/BackPressComponent";
 import ViewUtil from "../util/ViewUtil";
 import CheckBox from 'react-native-check-box'
@@ -22,18 +22,21 @@ class SortKeyPage extends Component<Props> {
     constructor(props) {
         super(props);
         this.params = this.props.navigation.state.params;
-        this.backPress = new BackPressComponent({backPress: (e) => this.onBackPress(e)});
+        this.backPress = new BackPressComponent({ backPress: (e) => this.onBackPress(e) });
         this.languageDao = new LanguageDao(this.params.flag);
         this.state = {
-            checkedArray: SortKeyPage._keys(this.props),
+            checkedArray: SortKeyPage._keys(this.props),//缺省为原始数据
         }
     }
-
+    //生命周期:constructor --> getDerivedStateFromProps --> render --> componentDidMount
+    //app打开 "趋势"模块后会发起action,此页面从reducer获取数据,假如没有打开过"趋势模块"，当前页面就会自己发起action
+    //获取到数据后props就会改变，getDerivedStateFromProps就会被调用,重新将state返回，重新渲染
     static getDerivedStateFromProps(nextProps, prevState) {
         const checkedArray = SortKeyPage._keys(nextProps, null, prevState);
-        if (prevState.keys !== checkedArray) {
+        //checkedArray没有数据时才重新赋值
+        if (prevState.checkedArray.length === 0 && prevState.checkedArray !== checkedArray) {
             return {
-                keys: checkedArray,
+                checkedArray: checkedArray,
             }
         }
         return null;
@@ -43,7 +46,7 @@ class SortKeyPage extends Component<Props> {
         this.backPress.componentDidMount();
         //如果props中标签为空则从本地存储中获取标签
         if (SortKeyPage._keys(this.props).length === 0) {
-            let {onLoadLanguage} = this.props;
+            let { onLoadLanguage } = this.props;
             onLoadLanguage(this.params.flag);
         }
     }
@@ -53,7 +56,7 @@ class SortKeyPage extends Component<Props> {
     }
 
     /**
-     * 获取标签
+     * 获取标签。只要state为false,返回的都是redux中的props.language[flag] || [];即原始数据
      * @param props
      * @param state
      * @returns {*}
@@ -65,8 +68,12 @@ class SortKeyPage extends Component<Props> {
             return state.checkedArray;
         }
         //否则从原始数据中获取checkedArray
+
+        //先获取flag
         const flag = SortKeyPage._flag(props);
+        //再从redux中获取language
         let dataArray = props.language[flag] || [];
+        //最后将dataArray中checked为true的数据加到keys返回
         let keys = [];
         for (let i = 0, j = dataArray.length; i < j; i++) {
             let data = dataArray[i];
@@ -76,7 +83,7 @@ class SortKeyPage extends Component<Props> {
     }
 
     static _flag(props) {
-        const {flag} = props.navigation.state.params;
+        const { flag } = props.navigation.state.params;
         return flag === FLAG_LANGUAGE.flag_key ? "keys" : "languages";
     }
 
@@ -87,7 +94,7 @@ class SortKeyPage extends Component<Props> {
 
     onSave(hasChecked) {
         if (!hasChecked) {
-            //如果没有排序则直接返回
+            //如果没有排序(原始数据和checkedArray相等)则直接返回
             if (ArrayUtil.isEqual(SortKeyPage._keys(this.props), this.state.checkedArray)) {
                 NavigationUtil.goBack(this.props.navigation);
                 return;
@@ -99,7 +106,7 @@ class SortKeyPage extends Component<Props> {
         this.languageDao.save(this.getSortResult());
 
         //重新加载排序后的标签，以便其他页面能够及时更新
-        const {onLoadLanguage} = this.props;
+        const { onLoadLanguage } = this.props;
         //更新store
         onLoadLanguage(this.params.flag);
         NavigationUtil.goBack(this.props.navigation);
@@ -128,6 +135,7 @@ class SortKeyPage extends Component<Props> {
 
 
     onBack() {
+        //原始数据和当前checkedArray不一致时说明位置有变动
         if (!ArrayUtil.isEqual(SortKeyPage._keys(this.props), this.state.checkedArray)) {
             Alert.alert('提示', '要保存修改吗？',
                 [
@@ -136,10 +144,10 @@ class SortKeyPage extends Component<Props> {
                             NavigationUtil.goBack(this.props.navigation)
                         }
                     }, {
-                    text: '是', onPress: () => {
-                        this.onSave(true);
+                        text: '是', onPress: () => {
+                            this.onSave(true);
+                        }
                     }
-                }
                 ])
         } else {
             NavigationUtil.goBack(this.props.navigation)
@@ -147,7 +155,7 @@ class SortKeyPage extends Component<Props> {
     }
 
     render() {
-        const {theme} = this.params;
+        const { theme } = this.params;
         let title = this.params.flag === FLAG_LANGUAGE.flag_language ? '语言排序' : '标签排序';
         let navigationBar = <NavigationBar
             title={title}
@@ -160,14 +168,17 @@ class SortKeyPage extends Component<Props> {
             topColor={theme.themeColor}
         >
             {navigationBar}
+            {/* SortableListView可实现拖拽排序的效果,属性作用:https://www.helplib.com/GitHub/article_135279 */}
             <SortableListView
                 data={this.state.checkedArray}
-                order={Object.keys(this.state.checkedArray)}
+                order={Object.keys(this.state.checkedArray)}//按照什么来排序,Object.keys返回一个数组的所有key。返回结果按照升序排序
                 onRowMoved={e => {
+                    //item被移动的时候调用
                     this.state.checkedArray.splice(e.to, 0, this.state.checkedArray.splice(e.from, 1)[0])
                     this.forceUpdate()
                 }}
-                renderRow={row => <SortCell data={row} {...this.params}/>}
+                //渲染每行的item
+                renderRow={row => <SortCell data={row} {...this.params} />}
             />
         </SafeAreaViewPlus>
     }
@@ -175,16 +186,16 @@ class SortKeyPage extends Component<Props> {
 
 class SortCell extends Component {
     render() {
-        const {theme} = this.props;
+        const { theme } = this.props;
         return <TouchableHighlight
-            underlayColor={'#eee'}
+            underlayColor={'#eee'}//按下的颜色
             style={this.props.data.checked ? styles.item : styles.hidden}
             {...this.props.sortHandlers}>
-            <View style={{marginLeft: 10, flexDirection: 'row'}}>
+            <View style={{ marginLeft: 10, flexDirection: 'row' }}>
                 <MaterialCommunityIcons
                     name={'sort'}
                     size={16}
-                    style={{marginRight: 10, color: theme.themeColor}}/>
+                    style={{ marginRight: 10, color: theme.themeColor }} />
                 <Text>{this.props.data.name}</Text>
             </View>
         </TouchableHighlight>

@@ -14,6 +14,8 @@ export default class NavigationUtil {
             console.log('NavigationUtil.navigation can not be null')
             return;
         }
+        //navigation.navigate({ routeName, params, action, key })
+        //或者 navigation.navigate(routeName, params, action)
         navigation.navigate(
             page,
             {
