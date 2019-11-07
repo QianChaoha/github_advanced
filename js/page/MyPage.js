@@ -42,6 +42,7 @@ class MyPage extends Component<Props> {
                 RouteName = 'SortKeyPage';
                 params.flag = FLAG_LANGUAGE.flag_language;
                 break;
+            //自定义标签,自定义语言,标签移除
             case MORE_MENU.Custom_Key:
             case MORE_MENU.Custom_Language:
             case MORE_MENU.Remove_Key:

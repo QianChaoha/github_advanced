@@ -1,10 +1,10 @@
-import React, {Component} from 'react';
-import {Alert, ScrollView, StyleSheet, View} from 'react-native';
-import {connect} from 'react-redux';
+import React, { Component } from 'react';
+import { Alert, ScrollView, StyleSheet, View } from 'react-native';
+import { connect } from 'react-redux';
 import actions from '../action/index'
 import NavigationUtil from '../navigator/NavigationUtil'
 import NavigationBar from '../common/NavigationBar';
-import LanguageDao, {FLAG_LANGUAGE} from "../expand/dao/LanguageDao";
+import LanguageDao, { FLAG_LANGUAGE } from "../expand/dao/LanguageDao";
 import BackPressComponent from "../common/BackPressComponent";
 import ViewUtil from "../util/ViewUtil";
 import CheckBox from 'react-native-check-box'
@@ -18,29 +18,34 @@ class CustomKeyPage extends Component<Props> {
     constructor(props) {
         super(props);
         this.params = this.props.navigation.state.params;
-        this.backPress = new BackPressComponent({backPress: (e) => this.onBackPress(e)});
+        this.backPress = new BackPressComponent({ backPress: (e) => this.onBackPress(e) });
+        //存储此次选中或者取消选中的所有数据的数组。点击莫个checkbox时,changeValues中存在data-->移除。changeValues中不存在data-->添加。更新state
+        //点击返回时,changeValues存在数据,提示是否保存,changeValues的length为0，直接返回
+        //点击保存时,changeValues的length为0，直接返回。否则，changeValues中数据keys存在-->移除。changeValues中数据keys不存-->添加。更新state
         this.changeValues = [];
-        this.isRemoveKey = !!this.params.isRemoveKey;
+        this.isRemoveKey = !!this.params.isRemoveKey;//是否是标签移除
         this.languageDao = new LanguageDao(this.params.flag);
         this.state = {
             keys: []
         }
     }
 
-    static getDerivedStateFromProps(nextProps, prevState) {
-        if (prevState.keys !== CustomKeyPage._keys(nextProps, null, prevState)) {
-            return {
-                keys: CustomKeyPage._keys(nextProps, null, prevState),
-            }
-        }
-        return null;
-    }
+    // static getDerivedStateFromProps(nextProps, prevState) {
+            //老数据和新数据不相等时，将新数据更新到keys
+    //     if (prevState.keys !== CustomKeyPage._keys(nextProps, null, prevState)) {
+    //         return {
+    //             keys: CustomKeyPage._keys(nextProps, null, prevState),
+    //         }
+    //     }
+    //     return null;
+    // }
 
     componentDidMount() {
         this.backPress.componentDidMount();
         //如果props中标签为空则从本地存储中获取标签
+        //第一次调用componentDidMount,props.language[key]已经存在数据,以为在 "最热"和 "趋势"模块已经订阅过action
         if (CustomKeyPage._keys(this.props).length === 0) {
-            let {onLoadLanguage} = this.props;
+            let { onLoadLanguage } = this.props;
             onLoadLanguage(this.params.flag);
         }
         this.setState({
@@ -61,10 +66,11 @@ class CustomKeyPage extends Component<Props> {
      * @private
      */
     static _keys(props, original, state) {
-        const {flag, isRemoveKey} = props.navigation.state.params;
+        //flag:标识是最热模块还是趋势模块；isRemoveKey:标识是否是移除标签
+        const { flag, isRemoveKey } = props.navigation.state.params;
         let key = flag === FLAG_LANGUAGE.flag_key ? "keys" : "languages";
         if (isRemoveKey && !original) {
-            //如果state中的keys为空则从props中取
+            //是移除标签,  如果state中的keys为空则从props中取。优先返回state.keys
             return state && state.keys && state.keys.length !== 0 && state.keys || props.language[key].map(val => {
                 return {//注意：不直接修改props，copy一份
                     ...val,
@@ -72,6 +78,7 @@ class CustomKeyPage extends Component<Props> {
                 };
             });
         } else {
+            //不是移除标签
             return props.language[key];
         }
     }
@@ -86,16 +93,17 @@ class CustomKeyPage extends Component<Props> {
             NavigationUtil.goBack(this.props.navigation);
             return;
         }
-        let keys;
+        let keys;//保存移除后的结果
         if (this.isRemoveKey) {//移除标签的特殊处理
             for (let i = 0, l = this.changeValues.length; i < l; i++) {
+                //将changeValues数据从CustomKeyPage._keys里移除
                 ArrayUtil.remove(keys = CustomKeyPage._keys(this.props, true), this.changeValues[i], "name");
             }
         }
-        //更新本地数据
+        //更新本地数据(keys不为空(是移除标签)，就传keys。为空就传this.state.keys)
         this.languageDao.save(keys || this.state.keys);
-        const {onLoadLanguage} = this.props;
-        //更新store
+        const { onLoadLanguage } = this.props;
+        //更新store,因为 "最热"和 "趋势" 模块都需要更新此数据
         onLoadLanguage(this.params.flag);
         NavigationUtil.goBack(this.props.navigation);
     }
@@ -106,13 +114,14 @@ class CustomKeyPage extends Component<Props> {
         let len = dataArray.length;
         let views = [];
         for (let i = 0, l = len; i < l; i += 2) {
+            //因为每次循环都会添加2个元素(一行是2个元素),所以 i += 2。添加第二个元素时需要判断数组是否越界
             views.push(
                 <View key={i}>
                     <View style={styles.item}>
                         {this.renderCheckBox(dataArray[i], i)}
                         {i + 1 < len && this.renderCheckBox(dataArray[i + 1], i + 1)}
                     </View>
-                    <View style={styles.line}/>
+                    <View style={styles.line} />
                 </View>
             )
         }
@@ -137,10 +146,10 @@ class CustomKeyPage extends Component<Props> {
                             NavigationUtil.goBack(this.props.navigation)
                         }
                     }, {
-                    text: '是', onPress: () => {
-                        this.onSave();
+                        text: '是', onPress: () => {
+                            this.onSave();
+                        }
                     }
-                }
                 ])
         } else {
             NavigationUtil.goBack(this.props.navigation)
@@ -148,28 +157,28 @@ class CustomKeyPage extends Component<Props> {
     }
 
     _checkedImage(checked) {
-        const {theme} = this.params;
+        const { theme } = this.params;
         return <Ionicons
             name={checked ? 'ios-checkbox' : 'md-square-outline'}
             size={20}
             style={{
                 color: theme.themeColor,
-            }}/>
+            }} />
     }
 
     renderCheckBox(data, index) {
         return <CheckBox
-            style={{flex: 1, padding: 10}}
+            style={{ flex: 1, padding: 10 }}
             onClick={() => this.onClick(data, index)}
             isChecked={data.checked}
             leftText={data.name}
-            checkedImage={this._checkedImage(true)}
-            unCheckedImage={this._checkedImage(false)}
+            checkedImage={this._checkedImage(true)}//设置选中状态时图标
+            unCheckedImage={this._checkedImage(false)}//设置非选中状态时图标
         />
     }
 
     render() {
-        const {theme} = this.params;
+        const { theme } = this.params;
         let title = this.isRemoveKey ? '标签移除' : '自定义标签';
         title = this.params.flag === FLAG_LANGUAGE.flag_language ? '自定义语言' : title;
         let rightButtonTitle = this.isRemoveKey ? '移除' : '保存';

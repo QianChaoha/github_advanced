@@ -51,7 +51,6 @@ class PopularPage extends Component<Props> {
     _genTabs() {
         const tabs = {};
         const { keys, theme } = this.props;
-        debugger
         keys.forEach((item, index) => {
             if (item.checked) {
                 tabs[`tab${index}`] = {
@@ -114,7 +113,7 @@ class PopularPage extends Component<Props> {
                 indicatorStyle: styles.indicatorStyle,//标签指示器的样式
                 labelStyle: styles.labelStyle,//文字的样式
             },
-            lazy: true
+            lazy: true//开启懒加载,每次只渲染一个tab
         }
         )) : null;
         return <View style={styles.container}>
