@@ -120,7 +120,7 @@ class SortKeyPage extends Component<Props> {
         const flag = SortKeyPage._flag(this.props);
         //从原始数据中复制一份数据出来，以便对这份数据进行进行排序
         let sortResultArray = ArrayUtil.clone(this.props.language[flag]);
-        //获取排序之前的排列顺序
+        //获取排序之前的排列顺序    originalCheckedArray相当于是sortResultArray中所有checked为true的数据
         const originalCheckedArray = SortKeyPage._keys(this.props);
         //遍历排序之前的数据，用排序后的数据checkedArray进行替换
         for (let i = 0, j = originalCheckedArray.length; i < j; i++) {
@@ -128,6 +128,9 @@ class SortKeyPage extends Component<Props> {
             //找到要替换的元素所在位置
             let index = this.props.language[flag].indexOf(item);
             //进行替换
+            //index:数组开始下标
+            //len: 替换/删除的长度
+            //item:替换的值，删除操作的话 item为空
             sortResultArray.splice(index, 1, this.state.checkedArray[i]);
         }
         return sortResultArray;
